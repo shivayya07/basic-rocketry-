@@ -1,0 +1,21 @@
+#this is only for ideal spherical parachutes changes in designs make it change the size of parchute but this can help in the ideal calculation 
+import numpy as np
+
+# Constants
+g = 9.81  # gravity in m/s²
+rho = 1.225  # air density in kg/m³
+
+# Inputs
+mass = float(input("Enter mass of the object in grams: ")) / 1000  # convert to kg
+Cd = float(input("Enter drag coefficient (Cd) of your parachute: "))
+v_term = float(input("Enter the desired terminal velocity in m/s: "))
+
+# Calculate required parachute area (m²)
+area = (2 * mass * g) / (rho * Cd * v_term ** 2)
+
+# Calculate diameter assuming circular parachute
+diameter = 2 * np.sqrt(area / np.pi)
+
+# Output
+print(f"\nRequired parachute area: {area:.4f} m²")
+print(f"Required parachute diameter: {diameter:.2f} meters")
