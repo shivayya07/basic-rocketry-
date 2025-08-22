@@ -1,0 +1,75 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants
+g = 9.81  # m/s²
+rho = 1.225  # air density at sea level in kg/m³
+
+# ---- User Input Section ----
+mass_grams = float(input("Mass of the object in grams: "))
+radius = float(input("Radius of the object in meters: "))
+area = float(input("Cross-sectional area in m² (enter 0 to auto-calculate): "))
+Cd = float(input("Drag coefficient (typical: 0.47 for sphere): "))
+height = float(input("Drop height in meters: "))
+
+# ---- Preprocessing ----
+mass = mass_grams / 1000  # convert to kg
+
+if area == 0:
+    area = np.pi * radius ** 2
+    print(f"Auto-calculated Area: {area:.4f} m²")
+
+# Terminal Velocity Calculation
+vt = np.sqrt((2 * mass * g) / (rho * area * Cd))
+print(f"\n✅ Terminal Velocity (with air resistance): {vt:.2f} m/s")
+
+# Ideal Fall Time (no drag)
+t_ideal = np.sqrt(2 * height / g)
+print(f"⏱️ Ideal fall time (no air resistance): {t_ideal:.2f} s")
+
+# ---- Time-stepping Simulation ----
+dt = 0.01
+v = 0
+y = height
+t = 0
+
+time_list = []
+velocity_list = []
+height_list = []
+
+while y > 0:
+    Fd = 0.5 * rho * area * Cd * v ** 2
+    Fg = mass * g
+    net_force = Fg - Fd
+    a = net_force / mass
+    v += a * dt
+    y -= v * dt
+    t += dt
+
+    # Record data
+    time_list.append(t)
+    velocity_list.append(v)
+    height_list.append(max(y, 0))  # don’t let it go negative
+
+print(f"⏱️ Simulated fall time (with air resistance): {t:.2f} s")
+
+# ---- Plotting ----
+
+# 1. Velocity vs Time
+plt.figure()
+plt.plot(time_list, velocity_list)
+plt.xlabel('Time (s)')
+plt.ylabel('Velocity (m/s)')
+plt.title('Velocity vs Time (with Air Resistance)')
+plt.grid(True)
+plt.show()
+
+# 2. Height vs Time
+plt.figure()
+plt.plot(time_list, height_list)
+plt.xlabel('Time (s)')
+plt.ylabel('Height (m)')
+plt.title('Height vs Time (with Air Resistance)')
+plt.grid(True)
+plt.show()
